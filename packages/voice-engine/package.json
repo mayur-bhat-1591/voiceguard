@@ -1,0 +1,19 @@
+{
+  "name": "@voiceguard/voice-engine",
+  "version": "0.1.0",
+  "description": "Core voice processing and biometric analysis",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "jest",
+    "build": "rollup -c"
+  },
+  "dependencies": {
+    "@tensorflow/tfjs": "^4.15.0",
+    "ml-matrix": "^6.10.7",
+    "fft-js": "^0.0.12"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "rollup": "^4.9.0"
+  }
+}

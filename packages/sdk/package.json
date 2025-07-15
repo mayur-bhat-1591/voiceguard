@@ -1,0 +1,23 @@
+{
+  "name": "@voiceguard/sdk",
+  "version": "0.1.0",
+  "description": "VoiceGuard JavaScript/TypeScript SDK",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "rollup -c",
+    "test": "jest",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@voiceguard/voice-engine": "*",
+    "viem": "^1.19.11"
+  },
+  "devDependencies": {
+    "rollup": "^4.9.0",
+    "@rollup/plugin-typescript": "^11.1.5",
+    "jest": "^29.7.0",
+    "typescript": "^5.3.3"
+  }
+}

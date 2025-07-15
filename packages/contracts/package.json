@@ -1,0 +1,11 @@
+{
+  "name": "@voiceguard/contracts",
+  "version": "0.1.0",
+  "description": "VoiceGuard smart contracts",
+  "scripts": {
+    "build": "forge build",
+    "test": "forge test",
+    "deploy:mumbai": "forge script deploy/Deploy.s.sol --rpc-url mumbai",
+    "deploy:polygon": "forge script deploy/Deploy.s.sol --rpc-url polygon"
+  }
+}

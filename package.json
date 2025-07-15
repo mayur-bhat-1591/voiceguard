@@ -1,0 +1,18 @@
+{
+  "name": "voiceguard",
+  "version": "0.1.0",
+  "description": "Voice ownership infrastructure for the AI age",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm run dev:web\" \"npm run dev:api\"",
+    "dev:web": "cd packages/web && npm run dev",
+    "dev:api": "cd packages/api && python -m uvicorn src.main:app --reload",
+    "dev:api-conda": "cd packages/api && conda activate videnv && python -m uvicorn src.main:app --reload",
+    "install:all": "npm run install:web && npm run install:voice",
+    "install:web": "cd packages/web && npm install",
+    "install:voice": "cd packages/voice-engine && npm install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
