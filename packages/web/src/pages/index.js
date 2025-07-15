@@ -16,17 +16,16 @@ export default function Home() {
   };
 
   const handleRecordingComplete = (recording) => {
-    console.log('Recording completed:', recording);
+    console.log('Recording & Fingerprint completed:', recording);
     setLastRecording({
+      // Recording data
       duration: recording.duration.toFixed(1),
       size: (recording.audioBlob.size / 1024).toFixed(1),
       sampleRate: recording.audioBuffer.sampleRate,
-      samples: recording.channelData.length
+      samples: recording.channelData.length,
+      // Fingerprint data
+      fingerprint: recording.fingerprint
     });
-  };
-
-  const handleRecordingError = (error) => {
-    console.error('Recording error:', error);
   };
 
   return (
@@ -40,54 +39,109 @@ export default function Home() {
             Voice ownership infrastructure for the AI age
           </p>
           <p className="text-sm text-gray-500">
-            Step 1: Real voice capture with Web Audio API
+            Step 2: Voice fingerprinting with MFCC analysis
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 mb-8">
+        <div className="grid lg:grid-cols-3 gap-8 mb-8">
           {/* Voice Recorder */}
-          <VoiceRecorder
-            onRecordingComplete={handleRecordingComplete}
-            onError={handleRecordingError}
-          />
+          <div className="lg:col-span-1">
+            <VoiceRecorder
+              onRecordingComplete={handleRecordingComplete}
+              onError={(err) => console.error('Recording error:', err)}
+            />
+          </div>
 
-          {/* Recording Info */}
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <h2 className="text-2xl font-semibold mb-4">Recording Analysis</h2>
-            {lastRecording ? (
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Duration:</span>
-                  <span className="font-medium">{lastRecording.duration}s</span>
+          {/* Recording Analysis */}
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-lg shadow-lg p-6">
+              <h2 className="text-2xl font-semibold mb-4">📊 Recording Analysis</h2>
+              {lastRecording ? (
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Duration:</span>
+                    <span className="font-medium">{lastRecording.duration}s</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">File Size:</span>
+                    <span className="font-medium">{lastRecording.size}KB</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Sample Rate:</span>
+                    <span className="font-medium">{lastRecording.sampleRate}Hz</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Audio Samples:</span>
+                    <span className="font-medium">{lastRecording.samples.toLocaleString()}</span>
+                  </div>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">File Size:</span>
-                  <span className="font-medium">{lastRecording.size}KB</span>
+              ) : (
+                <p className="text-gray-500 text-center py-8">
+                  Record voice to see analysis
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* Voice Fingerprint */}
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-lg shadow-lg p-6">
+              <h2 className="text-2xl font-semibold mb-4">🔍 Voice Fingerprint</h2>
+              {lastRecording?.fingerprint ? (
+                <div className="space-y-4">
+                  {lastRecording.fingerprint.success ? (
+                    <div className="space-y-3">
+                      <div className="bg-green-50 p-3 rounded">
+                        <p className="text-green-800 font-medium text-center">
+                          🎯 {lastRecording.fingerprint.fingerprint}
+                        </p>
+                        <p className="text-xs text-green-600 text-center mt-1">
+                          Unique Voice ID
+                        </p>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 text-sm">
+                        <div>
+                          <span className="text-gray-600">Pitch:</span>
+                          <br /><span className="font-medium">{Math.round(lastRecording.fingerprint.features?.pitch || 0)}Hz</span>
+                        </div>
+                        <div>
+                          <span className="text-gray-600">Energy:</span>
+                          <br /><span className="font-medium">{(lastRecording.fingerprint.features?.energy || 0).toFixed(4)}</span>
+                        </div>
+                        <div>
+                          <span className="text-gray-600">Brightness:</span>
+                          <br /><span className="font-medium">{Math.round(lastRecording.fingerprint.features?.spectralCentroid || 0)}</span>
+                        </div>
+                        <div>
+                          <span className="text-gray-600">Texture:</span>
+                          <br /><span className="font-medium">{(lastRecording.fingerprint.features?.zeroCrossing || 0).toFixed(4)}</span>
+                        </div>
+                      </div>
+                      <div className="bg-blue-50 p-3 rounded">
+                        <p className="text-blue-800 text-sm text-center">
+                          Confidence: {Math.round((lastRecording.fingerprint.confidence || 0) * 100)}
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="bg-red-50 p-3 rounded text-red-700 text-sm">
+                      ❌ Fingerprinting failed: {lastRecording.fingerprint.error}
+                    </div>
+                  )}
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Sample Rate:</span>
-                  <span className="font-medium">{lastRecording.sampleRate}Hz</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Audio Samples:</span>
-                  <span className="font-medium">{lastRecording.samples.toLocaleString()}</span>
-                </div>
-                <div className="mt-4 p-3 bg-green-100 rounded">
-                  <p className="text-green-800 text-sm">✅ Voice captured successfully!</p>
-                </div>
-              </div>
-            ) : (
-              <p className="text-gray-500 text-center py-8">
-                Record your voice to see analysis
-              </p>
-            )}
+              ) : (
+                <p className="text-gray-500 text-center py-8">
+                  Record voice to generate fingerprint
+                </p>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* API Status */}
+        {/* System Status */}
         <div className="bg-white rounded-lg shadow-lg p-6">
           <h2 className="text-2xl font-semibold mb-4">System Status</h2>
-          <div className="grid md:grid-cols-3 gap-4">
+          <div className="grid md:grid-cols-4 gap-4">
             <div className="text-center">
               <div className="text-3xl mb-2">✅</div>
               <h3 className="font-medium">Frontend</h3>
@@ -97,6 +151,11 @@ export default function Home() {
               <div className="text-3xl mb-2">🎤</div>
               <h3 className="font-medium">Voice Capture</h3>
               <p className="text-green-600 text-sm">Ready</p>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl mb-2">🔍</div>
+              <h3 className="font-medium">Fingerprinting</h3>
+              <p className="text-green-600 text-sm">Active</p>
             </div>
             <div className="text-center">
               <div className="text-3xl mb-2">🔗</div>
